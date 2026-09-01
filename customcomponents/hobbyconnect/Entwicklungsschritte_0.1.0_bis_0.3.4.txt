@@ -1,4 +1,4 @@
-# HobbyConnect Home Assistant Integration – 0.1.0
+#_ HobbyConnect Home Assistant Integration – 0.1.0
 
 Experimentelle erste Version der direkten BLE-Lichtsteuerung für HobbyConnect / Toptron.
 
