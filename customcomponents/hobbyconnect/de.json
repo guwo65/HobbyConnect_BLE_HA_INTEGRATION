@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "HobbyConnect",
+        "description": "HobbyConnect über Bluetooth einrichten"
+      }
+    },
+    "error": {
+      "cannot_connect": "HobbyConnect ist derzeit nicht über Bluetooth erreichbar."
+    },
+    "abort": {
+      "already_configured": "Dieses HobbyConnect-Gerät ist bereits eingerichtet.",
+      "not_hobbyconnect": "Das erkannte Bluetooth-Gerät ist kein HobbyConnect."
+    }
+  }
+}
