@@ -1,0 +1,18 @@
+{
+  "domain": "hobbyconnect",
+  "name": "HobbyConnect",
+  "version": "0.3.4",
+  "config_flow": true,
+  "iot_class": "local_polling",
+  "dependencies": [
+    "bluetooth",
+    "bluetooth_adapters"
+  ],
+  "bluetooth": [
+    {
+      "service_uuid": "eaffffff-ffff-ffff-ffff-fffffffffff0",
+      "connectable": true
+    }
+  ],
+  "requirements": []
+}
