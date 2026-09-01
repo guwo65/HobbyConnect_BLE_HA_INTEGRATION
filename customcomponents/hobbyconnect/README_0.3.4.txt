@@ -1,0 +1,307 @@
+# HobbyConnect Home Assistant Integration – 0.1.0
+
+Experimentelle erste Version der direkten BLE-Lichtsteuerung für HobbyConnect / Toptron.
+
+## Installation
+
+Kopiere den Ordner:
+
+`custom_components/hobbyconnect`
+
+nach:
+
+`/config/custom_components/hobbyconnect`
+
+Danach Home Assistant vollständig neu starten.
+
+Anschließend:
+**Einstellungen → Geräte & Dienste → Integration hinzufügen → HobbyConnect**
+
+Das HobbyConnect-Gerät muss in Home Assistant als Bluetooth-Gerät mit dem Namen `ESP32`
+sichtbar und verbindbar sein.
+
+## Aktueller Umfang
+
+- direkte BLE-Verbindung ohne ESP32-Zwischengerät
+- BT_ID + BT_VARS Initialisierung
+- Push-Updates über BLE Notifications
+- automatische Reconnect-/Refresh-Versuche
+- Home-Assistant-Light-Entities
+- Dimmer 0..15 ↔ Home Assistant 1..255
+- bestätigte invertierte Schreiblogik für Küche 1
+- LIGHT_BUSY wird nicht als Licht angelegt
+
+## Aktuelle DIM-Zuordnung
+
+- LIGHT_DIM0 → Extra 3 (vermutet; keine sichtbare Reaktion)
+- LIGHT_DIM1 → Bett 2
+- LIGHT_DIM2 → Decke
+- LIGHT_DIM3 → Wand
+- LIGHT_DIM4 → Extra 2
+
+## Wichtig für 0.1.0
+
+Einige Nicht-DIM-Kanalnamen sind noch bewusst protokollnah gehalten. Diese Version ist
+als erster Integrations-Test gedacht. Bei unerwartetem Schaltverhalten bitte Debug-Logs
+für `custom_components.hobbyconnect` sichern, bevor weitere Zuordnungen geändert werden.
+
+
+HobbyConnect 0.1.1 – BLE discovery fix
+==========================================
+
+This archive is an OVERLAY UPDATE for an existing HobbyConnect 0.1.0 installation.
+
+It intentionally replaces only:
+  custom_components/hobbyconnect/config_flow.py
+
+The existing coordinator/light/const/etc. files remain untouched.
+
+IMPORTANT:
+After copying the archive contents over /config/, edit the existing
+/config/custom_components/hobbyconnect/manifest.json and change only:
+
+  "version": "0.1.0"
+
+to:
+
+  "version": "0.1.1"
+
+Do NOT replace the complete manifest with manifest.version.patch.json.
+That small JSON file is only a reference showing the required version change.
+
+What changed:
+- preferred lookup by confirmed BLE address c0:ee:fb:90:b0:a7
+- Home Assistant Bluetooth active-cache refresh before lookup
+- fallback to the advertised name ESP32
+- no direct BleakScanner is started by the config flow
+
+Then restart Home Assistant and add HobbyConnect again.
+
+
+HobbyConnect 0.1.2 - Bluetooth discovery fix
+=============================================
+
+Overlay update for an existing HobbyConnect 0.1.0/0.1.1 installation.
+
+Replace:
+  /config/custom_components/hobbyconnect/config_flow.py
+
+Then change in the existing manifest.json:
+  "version": "0.1.2"
+
+Detection in 0.1.2:
+  Primary: service UUID eaffffff-ffff-ffff-ffff-fffffffffff0
+  Fallback: local name "HobbyConnect Data" / names beginning "HobbyConnect"
+
+The BLE address is NOT hard-coded anymore.
+The detected Home Assistant BLEDevice address is stored in the config entry.
+
+Current advertisement supplied during diagnosis:
+  name: HobbyConnect Data
+  address: E8:F6:0A:26:54:F2
+  connectable: true
+  service UUID: eaffffff-ffff-ffff-ffff-fffffffffff0
+
+Restart Home Assistant after replacing the file and then add the integration again.
+
+
+HobbyConnect 0.2.0
+===================
+
+Wichtigste Änderungen
+---------------------
+- BLE-Erkennung aus 0.1.2 beibehalten:
+  Service UUID eaffffff-ffff-ffff-ffff-fffffffffff0
+- Echte Home-Assistant-Lichtentitäten statt reiner Schalterlogik.
+- Dimmer werden von Home Assistant 1..255 auf HobbyConnect 1..15 skaliert.
+- Dimmer AUS = 0.
+- Bett 1 korrigiert: LIGHT_DIM0.
+- Extra 3 bleibt erhalten: LIGHT_ZUSATZR (derzeit kein Ausgang angeschlossen).
+- Küche 1 bleibt nicht dimmbar und verwendet die bestätigte invertierte
+  Schreibrichtung (0=AN, 1=AUS).
+
+Zuordnung
+---------
+LIGHT_DUSCHE  = Dusche
+LIGHT_WASCH   = Bad
+LIGHT_ZUSATZL = Extra 1
+LIGHT_ZUSATZR = Extra 3
+LIGHT_KUECHE  = Küche 1 (nicht dimmbar, invertierter Schreibbefehl)
+LIGHT_DIM0    = Bett 1
+LIGHT_DIM1    = Bett 2
+LIGHT_DIM2    = Decke
+LIGHT_DIM3    = Wand
+LIGHT_DIM4    = Extra 2
+
+Installation
+------------
+1. Den Ordner custom_components/hobbyconnect aus diesem ZIP über den
+   vorhandenen Ordner /config/custom_components/hobbyconnect kopieren.
+2. Home Assistant vollständig neu starten.
+3. Die bestehende HobbyConnect-Integration NICHT löschen; 0.2.0 verwendet
+   den bereits gespeicherten Bluetooth-Endpunkt weiter.
+4. Nach dem Neustart sollten Bett 1, Bett 2, Decke, Wand und Extra 2 einen
+   Helligkeitsregler anzeigen.
+
+Hinweis zu vorhandenen Entitätsnamen
+------------------------------------
+Home Assistant merkt sich bereits registrierte Entitäten. Falls eine alte
+Entität weiterhin den früheren Namen "Extra 3" trägt, obwohl sie jetzt
+LIGHT_DIM0/Bett 1 ist, kann der Anzeigename im Entitätsdialog zurückgesetzt
+oder die betreffende Entität dort umbenannt werden.
+
+
+
+
+
+HobbyConnect 0.3.0
+===================
+
+Neu gegenüber 0.2.0
+-------------------
+Sensoren:
+- Innentemperatur (TEMP_IN)
+- Außentemperatur (TEMP_OUT)
+- Wasserstand (WATER_LEVEL, 0..4 => 0..100%)
+
+Schalter:
+- Fußbodenerwärmung (FLOOR_HEATER_ON)
+- Therme (THERME_ON)
+
+Select:
+- Betriebsmodus (HS_KEY_STATE)
+  0 = Fahrzeug Standby
+  1 = Nur Geräte
+  2 = Geräte und Lichter
+
+Unverändert:
+- BLE-Erkennung über HobbyConnect Data / Service UUID
+- komplette Lichtsteuerung
+- Dimmung
+- Küche 1 invertierte Schaltlogik
+
+Installation:
+1. custom_components/hobbyconnect über den bestehenden Ordner kopieren.
+2. Home Assistant vollständig neu starten.
+3. Bestehende Integration nicht löschen.
+
+Hinweis:
+Die Temperaturwerte werden direkt aus den vom EL770 gelieferten TEMP_IN/TEMP_OUT-
+Strings gelesen. Die Kalibrierung des neuen Touchdisplays ist nicht Bestandteil
+des EL770-BT_VARS-Datenstroms.
+
+HobbyConnect 0.3.1
+===================
+
+Neu:
+- Küche 2
+- Ambiente 1
+- Ambiente 2
+- Ambiente 3
+- Fußbodenerwärmung mit bestätigtem Schreibbefehl FLOOR_HEATER_ON
+- Therme mit bestätigtem Schreibbefehl THERME_ON
+- Hauptschalter mit zustandsabhängiger HS_KEY-Sequenzlogik
+- bestehende Sensoren, Wasserstand und Dimmer bleiben erhalten
+
+Installation:
+1. custom_components/hobbyconnect über den bestehenden Ordner kopieren.
+2. Home Assistant vollständig neu starten.
+3. Bestehende Integration nicht löschen.
+
+
+HobbyConnect 0.3.2
+===================
+
+Fix gegenüber 0.3.1:
+- BLE-Schreibpfad auf direkten BleakClient umgestellt.
+- Das entspricht der Methode, die in den erfolgreichen Probephasen 17-19
+  Therme und HS_KEY tatsächlich schalten konnte.
+- Bis zu 3 Schreibversuche mit kurzer Pause bei transienten GATT-Fehlern.
+- Lese-/Sensorpfad bleibt unverändert.
+- Küche 2 und Ambiente 1-3 bleiben enthalten.
+- Hauptschalter nutzt nur bereits bestätigte Übergänge:
+    Standby -> Nur Geräte
+    Nur Geräte -> Geräte und Lichter
+    Standby -> Geräte und Lichter
+    Geräte und Lichter -> Nur Geräte
+  Rückkehr zu Standby aus anderen Zuständen ist absichtlich noch nicht
+  freigeschaltet, solange der exakte Befehl nicht sicher bestätigt ist.
+
+Installation:
+1. custom_components/hobbyconnect über den bestehenden Ordner kopieren.
+2. __pycache__ löschen.
+3. Home Assistant vollständig neu starten.
+
+HobbyConnect 0.3.3
+===================
+
+Wesentliche Änderung:
+- Persistente BLE-Verbindung statt Connect/Write/Disconnect pro Aktion.
+- Notifications bleiben dauerhaft aktiv.
+- Änderungen am Originalpanel werden sofort in den HA-Coordinator übernommen.
+- Periodischer BT_VARS-Poll bleibt als Absicherung bestehen.
+- Schreibzugriffe verwenden weiterhin direkten BleakClient.
+- Lichtbefehle sollten dadurch wieder deutlich schneller reagieren.
+
+Unverändert:
+- Küche 2
+- Ambiente 1-3
+- alle bisherigen Lampen und Dimmer
+- Therme / Fußbodenerwärmung
+- Temperatur / Wasserstand
+- konservative, bereits bestätigte Hauptschalter-Übergänge
+
+Installation:
+1. custom_components/hobbyconnect über den bestehenden Ordner kopieren.
+2. __pycache__ löschen.
+3. Home Assistant vollständig neu starten.
+
+
+HobbyConnect 0.3.4 – Temperaturkalibrierung
+================================================
+
+Dieses Paket ist das Update von Version 0.3.3 auf 0.3.4.
+
+Neu:
+- Zwei Home-Assistant-Konfigurationsregler:
+  * Kalibrierung Innentemperatur
+  * Kalibrierung Außentemperatur
+- Einstellbereich: -10.0 bis +10.0 °C
+- Schrittweite: 0.1 °C
+- Kalibrierwerte werden dauerhaft in ConfigEntry.options gespeichert.
+- Angezeigte Temperatur = HobbyConnect-Rohwert + Kalibrierwert
+- Es wird KEIN Kalibrierwert per BLE an die Hobby-Steuerung geschrieben.
+
+Unverändert:
+- BLE-Kommunikation
+- sofortige Panel-Rückmeldungen aus Version 0.3.3
+- Lichtsteuerung
+- Therme
+- Fußbodenerwärmung
+- Wasserstand
+- Betriebsmodus
+
+Geändert:
+- __init__.py: Plattform "number" ergänzt
+- manifest.json: Version 0.3.4
+- const.py: Schlüssel für die beiden Kalibrierwerte
+- sensor.py: Anwendung der Kalibrierwerte
+- number.py: neue Kalibrierungs-Entitäten
+
+Installation als Update:
+1. Inhalt dieses Ordners nach
+   /config/custom_components/hobbyconnect/
+   kopieren und vorhandene gleichnamige Dateien ersetzen.
+2. Home Assistant vollständig neu starten.
+3. Unter HobbyConnect sollten die beiden neuen Kalibrierungsregler erscheinen.
+
+Beispiel:
+HobbyConnect zeigt 24.8 °C, Referenzthermometer 23.6 °C
+=> Kalibrierung Innentemperatur = -1.2 °C
+=> Home Assistant zeigt 23.6 °C
+
+
+WICHTIG: Nach jedem Update ausführen:
+docker exec -it homeassistant rm -rf /config/custom_components/hobbyconnect/__pycache__
+
+
