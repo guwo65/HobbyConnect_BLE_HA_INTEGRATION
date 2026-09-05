@@ -229,6 +229,8 @@ kopieren.
 
 Anschließend Home Assistant vollständig neu starten.
 
+Die Installationsmethode über das Release habe ich noch nicht getestet.
+
 Danach unter:
 
 ```text
