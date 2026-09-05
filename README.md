@@ -587,6 +587,8 @@ to
 
 Then restart Home Assistant completely.
 
+
+Installing the release directly in HA has not been tested so far.
 Afterwards go to:
 
 ```text
