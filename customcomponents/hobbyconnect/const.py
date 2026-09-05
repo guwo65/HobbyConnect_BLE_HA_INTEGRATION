@@ -4,8 +4,7 @@ DOMAIN = "hobbyconnect"
 
 CHAR_UUID = "00000001-0000-1000-8000-00805f9b34fb"
 ADVERTISEMENT_SERVICE_UUID = "eaffffff-ffff-ffff-ffff-fffffffffff0"
-BT_ID = "c0:ee:fb:90:b0:a7"
-
+BT_ID = "02:00:00:00:00:01"
 SCAN_INTERVAL_SECONDS = 30
 BT_VARS_TIMEOUT_SECONDS = 12
 
