@@ -19,6 +19,12 @@ Die Kommunikation erfolgt lokal. Für diese Integration ist kein ESP32, MQTT-Bro
 
 Die Integration stellt – abhängig von der vorhandenen HobbyConnect-Ausstattung – Lichtkanäle, Temperaturen, Wasserstand, 230-V-Verbraucher und den Haupt-Betriebsmodus als native Home-Assistant-Entitäten bereit.
 
+Entwickelt und getestet in einem Hobby 720WQC(Modelljahr 2023), Lichtsteuersystem 2022( Premium,Excellent,Prestige,Edition), Toptron Artikel-Nr. EL770, und dem neuen Hobby Touchdisplay.
+RaspberryPi 4B8GB+SSD, HA: Core 2026.8.3, Supervisor 2026.08.0, OS 18.2
+
+In meinem Hobby habe ich die Stecker Deckenleuchte Dimmer(31) mit Ambiente 2b(20) getauscht, sowie Küche 2b(53) mit Ambiente3a (24). Namen und Nummern vom Kontaktplan Lichtsteuersystem in der Hobby Bedienungsanleitung.
+
+
 ## Funktionen
 
 ### Lichtsteuerung
